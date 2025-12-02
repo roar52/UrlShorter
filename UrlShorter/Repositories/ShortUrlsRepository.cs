@@ -20,7 +20,7 @@ public static class ShortUrlsRepository
             {
                 db.SaveChanges();
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 throw new Exception("Такой короткий url уже существует");
             }
@@ -33,6 +33,14 @@ public static class ShortUrlsRepository
         {
             var result = db.ShortUrls.Find(slug);
             return result?.LongUrl;
+        }
+    }
+
+    public static bool SlugExists(string slug)
+    {
+        using (DatabaseContext db = new DatabaseContext())
+        {
+            return db.ShortUrls.Find(slug) != null;
         }
     }
 }

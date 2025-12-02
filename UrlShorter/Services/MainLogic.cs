@@ -4,9 +4,25 @@ namespace UrlShorter.Services;
 
 public static class MainLogic
 {
+    private const int MAX_RETRY_ATTEMPTS = 5;
+
     public static string GenerateShortUrl(string longUrl)
     {
-        string slug = LogicHelper.GenerateSlug();
+        string slug;
+        int attempts = 0;
+
+        do
+        {
+            slug = LogicHelper.GenerateSlug();
+            attempts++;
+
+            if (attempts >= MAX_RETRY_ATTEMPTS)
+            {
+                throw new InvalidOperationException($"Failed to generate unique slug after {MAX_RETRY_ATTEMPTS} attempts");
+            }
+        }
+        while (ShortUrlsRepository.SlugExists(slug));
+
         ShortUrlsRepository.AddSlug(slug, longUrl);
         return slug;
     }
