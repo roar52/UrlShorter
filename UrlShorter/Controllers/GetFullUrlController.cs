@@ -6,16 +6,42 @@ namespace UrlShorter.Controllers;
 public class GetFullUrlController: Controller
 {
     [HttpGet("/{slug}")]
-    public RedirectResult RedirectToFullUrl(string slug)
+    public IActionResult RedirectToFullUrl(string slug)
     {
         try
         {
             string url = MainLogic.GetLongUrlBySlug(slug);
+            
+            if (!IsValidRedirectUrl(url))
+            {
+                return BadRequest("Invalid redirect URL");
+            }
+
             return Redirect(url);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            throw new HttpProtocolException(404, "Page not found", ex);
+            return NotFound("Short URL not found");
         }
+    }
+
+    private bool IsValidRedirectUrl(string url)
+    {
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            return false;
+        }
+        
+        if (!Uri.TryCreate(url, UriKind.Absolute, out Uri? uri))
+        {
+            return false;
+        }
+
+        if (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps)
+        {
+            return false;
+        }
+
+        return true;
     }
 }

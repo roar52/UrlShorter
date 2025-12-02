@@ -1,12 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace UrlShorter.Models;
 
 [Table("short_urls")]
-[PrimaryKey(nameof(Slug))]
-public class ShortUrls: DbContext
+public class ShortUrls
 {
-    public string Slug { get; set; }
+    [Key]
+    public string Slug { get; set; } = string.Empty;
+
     public string? LongUrl { get; set; }
 }

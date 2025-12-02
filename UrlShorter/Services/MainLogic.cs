@@ -7,15 +7,7 @@ public static class MainLogic
     public static string GenerateShortUrl(string longUrl)
     {
         string slug = LogicHelper.GenerateSlug();
-        try
-        {
-            ShortUrlsRepository.AddSlug(slug, longUrl);
-        }
-        catch (Exception exception)
-        {
-            // ignored
-        }
-
+        ShortUrlsRepository.AddSlug(slug, longUrl);
         return slug;
     }
 
@@ -24,7 +16,7 @@ public static class MainLogic
         string? url = ShortUrlsRepository.GetLongUrlBySlug(slug);
         if (string.IsNullOrEmpty(url))
         {
-            throw new Exception();
+            throw new KeyNotFoundException($"Short URL with slug '{slug}' not found");
         }
         return url;
     }
